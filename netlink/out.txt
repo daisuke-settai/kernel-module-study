@@ -1,0 +1,9 @@
+[user console]
+Sending message to kernel
+Waiting for message from kernel
+Received message payload: hello from kernel module.
+
+[kernel log]
+[ 3434.615448] Entering: hello_nl_recv_msg
+[ 3434.615452] Netlink received msg payload: Hello
+[ 3434.615455] About to send msg bak:hello from kernel module.
