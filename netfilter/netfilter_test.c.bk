@@ -1,0 +1,108 @@
+#include <linux/module.h>
+#include <linux/netfilter.h>
+#include <linux/netfilter_ipv4.h>
+#include <linux/skbuff.h>
+#include <linux/types.h>
+
+static struct nf_hook_ops nf_ops_recv;
+static struct nf_hook_ops nf_ops_post;
+static struct nf_hook_ops nf_ops_arp_recv;
+
+//受信時はout = NULL, 送信時はin = NULL
+unsigned int ipv4_hook_recv(
+	const struct nf_hook_ops *ops,  // たぶん登録したnf_hook_opsの情報が入っている
+  struct sk_buff *skb,            // パケットデータなどが格納される領域、基本的にこのデータを参照する
+  const struct net_device *in,    // パケットを受信したデバイス名（ネットワークデバイスに関する情報が入っている)
+  const struct net_device *out,   // パケットを送信しようとするデバイス名
+  struct nf_hook_state *state     // 未調査
+) {
+	printk("[ed] ipv4_hook_recv\n");
+	return 0;
+}
+
+unsigned int ipv4_hook_post(
+	const struct nf_hook_ops *ops,  // たぶん登録したnf_hook_opsの情報が入っている
+  struct sk_buff *skb,            // パケットデータなどが格納される領域、基本的にこのデータを参照する
+  const struct net_device *in,    // パケットを受信したデバイス名（ネットワークデバイスに関する情報が入っている)
+  const struct net_device *out,   // パケットを送信しようとするデバイス名
+  struct nf_hook_state *state     // 未調査
+) {
+	printk("[ed] ipv4_hook_post\n");
+	return 0;
+}
+
+unsigned int arp_hook_recv(
+	const struct nf_hook_ops *ops,  // たぶん登録したnf_hook_opsの情報が入っている
+  struct sk_buff *skb,            // パケットデータなどが格納される領域、基本的にこのデータを参照する
+  const struct net_device *in,    // パケットを受信したデバイス名（ネットワークデバイスに関する情報が入っている)
+  const struct net_device *out,   // パケットを送信しようとするデバイス名
+  struct nf_hook_state *state     // 未調査
+) {
+	printk("[ed] arp_hook_recv\n");
+	return 0;
+}
+
+int init_module()
+{
+  // IPv4 パケット受信時に動作する関数の登録
+  nf_ops_recv.hook     = ipv4_hook_recv;                         /* フック関数の登録 */
+  nf_ops_recv.pf       = NFPROTO_IPV4;                   /* フック対象のインターネットプロトコルファミリー */
+  nf_ops_recv.hooknum  = NF_IP_PRE_ROUTING;              /* IPパケット受信時に呼び出す設定 */
+  nf_ops_recv.priority = NF_IP_PRI_FIRST;                        /* 最優先で実行される */
+
+
+  // IPv4 パケット送信時に動作する関数の登録
+  nf_ops_post.hook       = ipv4_hook_post;
+  nf_ops_post.pf         = NFPROTO_IPV4;
+  nf_ops_post.hooknum    = NF_IP_POST_ROUTING;
+  nf_ops_post.priority   = NF_IP_PRI_FIRST;
+
+  // ARP受信時
+  nf_ops_arp_recv.hook     = arp_hook_recv;
+  nf_ops_arp_recv.pf             = NFPROTO_ARP;  /* ARPのProtocol Family*/
+  nf_ops_arp_recv.hooknum        = NF_ARP_IN;    /* ARP受信時 */
+  nf_ops_arp_recv.priority       = NF_IP_PRI_FIRST; /* 最優先 */
+
+  int reg_r = 0;
+
+  /* フック関数の登録 */
+  reg_r = nf_register_hook(&nf_ops_recv);
+  if (reg_r < 0) {
+    printk(KERN_ALERT "Failed to register nf_register_hook.(ipv4_recv)");
+    return reg_r;
+  }
+
+  reg_r = nf_register_hook(&nf_ops_post);
+  if (reg_r < 0) {
+    printk(KERN_ALERT "Failed to register nf_register_hook.(ipv4_post)");
+    return reg_r;
+  }
+
+  reg_r = nf_register_hook(&nf_ops_arp_recv);
+  if (reg_r < 0) {
+    printk(KERN_ALERT "Failed to register nf_register_hook.(arp_recv)");
+    return reg_r;
+  }
+}
+
+void cleanup_module() {
+  nf_unregister_hook(&nf_ops_recv);
+  nf_unregister_hook(&nf_ops_post);
+  nf_unregister_hook(&nf_ops_arp_recv);
+ }
+
+static void __init netfilter_init(void)
+{
+  printk("netfilter init\n");
+  init_module();
+}
+
+static void __exit netfilter_exit(void)
+{
+  printk("netfilter exit\n");
+  cleanup_module();
+}
+
+module_init(netfilter_init);
+module_exit(netfilter_exit);
+
