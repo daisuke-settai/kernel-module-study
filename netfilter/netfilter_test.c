@@ -6,12 +6,9 @@
 
 static struct nf_hook_ops nf_ops_recv;
 
-//受信時はout = NULL, 送信時はin = NULL
 unsigned int ipv4_hook_recv(
 	const struct nf_hook_ops *ops,  // たぶん登録したnf_hook_opsの情報が入っている
   struct sk_buff *skb,            // パケットデータなどが格納される領域、基本的にこのデータを参照する
-  const struct net_device *in,    // パケットを受信したデバイス名（ネットワークデバイスに関する情報が入っている)
-  const struct net_device *out,   // パケットを送信しようとするデバイス名
   struct nf_hook_state *state     // 未調査
 ) {
 	printk("[ed] ipv4_hook_recv\n");
@@ -34,16 +31,19 @@ int filter_test(void)
     printk(KERN_ALERT "Failed to register nf_register_hook.(ipv4_recv)");
     return reg_r;
   }
+  return reg_r;
 }
 
 void cleanup(void) {
   nf_unregister_hook(&nf_ops_recv);
  }
 
-static void __init nf_init(void)
+static int __init nf_init(void)
 {
+  int ret;
   printk("netfilter init\n");
-  filter_test();
+  ret = filter_test();
+  return ret;
 }
 
 static void __exit nf_exit(void)
