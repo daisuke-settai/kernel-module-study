@@ -1,4 +1,4 @@
-objm =  netfilter_check_max_regster.o
+objm =  netfilter_test2.o
 
 obj-m += $(objm)
 

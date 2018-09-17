@@ -34,9 +34,14 @@ netfilter に2つの関数を登録．
 nf_hook_ops のprivを利用．  
 hookfn に値が渡されていることを確認． 
   
+### netfilter_test2.c
+nf_hook_ops.pf をARPにして動作確認  
+arpingコマンドを用いて確認  
+
 ### netfilter_check_max_register.c
 netfilter に登録できる関数の数に上限があるのか確認する．    
 コードを見た感じ，関数登録の際，上限を設定する処理は見当たらないが一応チェック．  
 N個の関数を登録し確認.   
 N: 70,000 => ok   
-N: 1,000,000 => ok (10分以上かかった)
+N: 1,000,000 => ok (register:10分以上かかった)    
+  -> 実行結果の一部をout.txtに記載  
