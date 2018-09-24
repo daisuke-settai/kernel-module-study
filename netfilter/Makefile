@@ -1,4 +1,4 @@
-objm =  netfilter_test2.o
+objm =  nf1.o netfilter_test3.o
 
 obj-m += $(objm)
 

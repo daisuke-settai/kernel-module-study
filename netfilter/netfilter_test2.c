@@ -46,8 +46,8 @@ int filter_test(void)
 
   nf_ops_recv2.hook     = ipv4_hook_recv2;                         /* フック関数の登録 */
   nf_ops_recv2.priv     = NULL;                          /* .hookのprivに渡す値 */
-  nf_ops_recv2.pf       = NFPROTO_ARP;                   /* フック対象のインターネットプロトコルファミリー */
-  nf_ops_recv2.hooknum  = NF_INET_PRE_ROUTING;              /* IPパケット受信時に呼び出す設定 */
+  nf_ops_recv2.pf       = NFPROTO_IPV4;                   /* フック対象のインターネットプロトコルファミリー */
+  nf_ops_recv2.hooknum  = NF_INET_LOCAL_OUT;              /* IPパケット受信時に呼び出す設定 */
   nf_ops_recv2.priority = NF_IP_PRI_FIRST;                        /* 最優先で実行される */
   
   int reg_r = 0;

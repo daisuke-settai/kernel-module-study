@@ -38,6 +38,9 @@ hookfn に値が渡されていることを確認．
 nf_hook_ops.pf をARPにして動作確認  
 arpingコマンドを用いて確認  
 
+### netfilter_test3.c
+nf1.c の関数をnetfilter_test3.c 内でフックに登録するテスト．    
+
 ### netfilter_check_max_register.c
 netfilter に登録できる関数の数に上限があるのか確認する．    
 コードを見た感じ，関数登録の際，上限を設定する処理は見当たらないが一応チェック．  
