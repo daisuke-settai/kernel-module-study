@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
 #include <netinet/in.h>
 #include <linux/netfilter.h>
@@ -7,15 +8,17 @@
 
 static void print(const char *buf, int len)
 {
-  printf("print\n");
+  printf("print: len: %d\n", len);
   int i;
   for(i = 0; i < len; ++i) {
-    printf("%02X ", (unsigned char)buf[i]);
-    if(i % 0x10 == 0)
+    if(i % 0x10 == 0){
       printf("\n");
+      printf("0x%04x:  ", i);
+    }
+    printf("%02x", (unsigned char)buf[i]);
+    if(i % 2 == 1)
+      printf(" ");
   }
-  printf("1\n");
-  
 }
 
 int dump(struct nfq_q_handle *qh, struct nfgenmsg *msg, struct nfq_data *nfdata, void *data)
@@ -69,6 +72,7 @@ int main(void)
     } else {
       printf("handle\n");
       nfq_handle_packet(nfqh, buf, len);
+      memset(buf, 0, sizeof(buf));
     }
   }
 

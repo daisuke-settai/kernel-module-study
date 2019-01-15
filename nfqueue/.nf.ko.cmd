@@ -1,1 +1,0 @@
-cmd_/home/ed/workspace/kernel-module-study/nfqueue/nf.ko := ld -r -m elf_x86_64  -z max-page-size=0x200000 -T ./scripts/module-common.lds --build-id  -o /home/ed/workspace/kernel-module-study/nfqueue/nf.ko /home/ed/workspace/kernel-module-study/nfqueue/nf.o /home/ed/workspace/kernel-module-study/nfqueue/nf.mod.o
